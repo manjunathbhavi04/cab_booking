@@ -2,6 +2,7 @@ package com.example.bookYourCab.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,5 @@ public class Cab {
     private String model;
     private int carNum;
     private boolean available;
+
 }

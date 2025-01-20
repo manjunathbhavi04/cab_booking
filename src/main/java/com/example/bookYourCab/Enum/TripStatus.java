@@ -1,4 +1,4 @@
-package com.example.bookYourCab.enums;
+package com.example.bookYourCab.Enum;
 
 public enum TripStatus {
     Completed,

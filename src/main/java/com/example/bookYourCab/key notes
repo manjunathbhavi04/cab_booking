@@ -1,0 +1,29 @@
+# dependencies
+jpa
+mysql driver
+lombok
+spring web
+
+# Enums are by default int
+when we a enum as a attribute in an entity that attribute is stored as a integer in the mysql database
+so we have to manually set the datatype by @Enumerated(value = EnumType.STRING) above the enum attribute in the entity class
+
+# foreign keys
+foreign keys are always created at many means
+customer to booking has a cardinality of one to many where one customer can have many bookings so the foreign key
+is created at booking table as customer_id
+
+# cardinalities for entities
+customer and booking one to many
+driver and booking one to many
+driver to cab one to one
+
+# application.properties default code
+spring.datasource.url = jpa:mysql://localhost:8080/db_name
+spring.datasource.username = root
+spring.datasource.password = root@123
+spring.jpa.hibernate.ddl-auto = update or create or any ddl
+
+# why use interface instead of class for repository
+we create a interface for entity repository because interface can inherit a interface but a class can only implement a interfcae this means
+that if we use a class then we have to implement the methods in JpaRepository

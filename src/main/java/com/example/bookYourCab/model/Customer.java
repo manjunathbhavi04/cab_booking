@@ -1,13 +1,12 @@
 package com.example.bookYourCab.model;
 
-import com.example.bookYourCab.enums.Gender;
+import com.example.bookYourCab.Enum.Gender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +17,14 @@ import java.util.List;
 @Entity
 public class Customer {
     @Id
-    private int customerId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long customerId;
     private String name;
     private int age;
+
     private String email;
+
+    @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
     // one customer can have many unique bookings so the relation is one to many

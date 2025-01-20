@@ -1,8 +1,6 @@
 package com.example.bookYourCab.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +14,8 @@ import lombok.Setter;
 public class Cab {
 
     @Id
-    private int cabId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long cabId;
     private String model;
     private int carNum;
     private boolean available;

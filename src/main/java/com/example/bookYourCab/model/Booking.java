@@ -1,10 +1,7 @@
 package com.example.bookYourCab.model;
 
-import com.example.bookYourCab.enums.TripStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.example.bookYourCab.Enum.TripStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,9 +17,10 @@ import java.util.Date;
 @Setter
 @Entity
 public class Booking {
-//    customer to booking relation is one to may
+    //customer to booking relation is one to many one customer can have multiple different bookings
     @Id
-    private int bookingId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long bookingId;
 
     private String pickUp;
 
@@ -32,6 +30,7 @@ public class Booking {
 
     private double billAmount;
 
+    @Enumerated(value = EnumType.STRING)
     private TripStatus tripStatus;
 
     @CreationTimestamp

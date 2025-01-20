@@ -16,7 +16,8 @@ import java.util.List;
 @Entity
 public class Driver {
     @Id
-    private int driverId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long driverId;
     private String name;
     private int age;
     private String email;

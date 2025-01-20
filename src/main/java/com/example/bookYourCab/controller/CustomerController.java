@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customer")
@@ -23,6 +24,11 @@ public class CustomerController {
         return new ResponseEntity<>(customService.getAllCustomer(), HttpStatus.OK);
     }
 
+    @GetMapping()
+    public ResponseEntity<Optional<Customer>> getCustomer(@RequestParam long customerId){
+        return new ResponseEntity<>(customService.getCustomer(customerId), HttpStatus.OK);
+    }
+
     @PostMapping("/addCustomer")
     public ResponseEntity<String> addCustomer(@RequestBody Customer customer){
         String message = customService.addCustomer(customer);
@@ -30,6 +36,12 @@ public class CustomerController {
             return new ResponseEntity<>(message, HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(message, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/updateCustomer")
+    public ResponseEntity<String> updateCustomer(@RequestBody Customer customer){
+        String message = customService.updateCustomer(customer);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteCustomer")

@@ -27,3 +27,12 @@ spring.jpa.hibernate.ddl-auto = update or create or any ddl
 # why use interface instead of class for repository
 we create a interface for entity repository because interface can inherit a interface but a class can only implement a interfcae this means
 that if we use a class then we have to implement the methods in JpaRepository
+
+# to get a single customer form the database
+jpa can be used to get a single customer based on the id but the problem is when we try to return a customer from the method
+this will give us error because in jpa it thinks that there can be multiple customer with same id so the return type of the
+method should be Optional<Customer>
+REASON -> the reason Spring Data JPA returns an Optional<Customer> when you use findById() is due to the fact that the customer with a specific ID might not exist in the database.
+The Optional type is a container that can either hold a non-null value (the customer) or be empty (if no customer with that ID exists). This allows you to handle the case where the customer
+might not be found without causing a NullPointerException. So, instead of returning just a Customer object, the method returns Optional<Customer>, and you can unwrap it to get the actual
+Customer or handle the case where it's empty (no customer found).

@@ -1,13 +1,17 @@
 package com.example.bookYourCab.service;
 
+import com.example.bookYourCab.Enum.Gender;
+import com.example.bookYourCab.dto.request.CustomerRequest;
+import com.example.bookYourCab.dto.response.CustomerResponse;
+import com.example.bookYourCab.exception.CustomerNotFoundException;
 import com.example.bookYourCab.model.Customer;
 import com.example.bookYourCab.repository.CustomerRepository;
+import com.example.bookYourCab.transformer.CustomerTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.nio.channels.AcceptPendingException;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,36 +20,66 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepo;
 
-    public List<Customer> getAllCustomer(){
-        return customerRepo.findAll();
+    public List<CustomerResponse> getAllCustomer(){
+        //At Service layer the Entity are being converted to DTO's
+        List<Customer> customers = customerRepo.findAll();
+        return customers.stream().map(customer -> new CustomerResponse(
+                customer.getName(),
+                customer.getAge(),
+                customer.getEmail()
+        )).toList();
     }
 
-    public String addCustomer(Customer customer){
-        List<Customer> existingCustomer = customerRepo.findByEmail(customer.getEmail());
-        if(!existingCustomer.isEmpty()){
+    public CustomerResponse getCustomer(long customerId) {
+        // we use Optional because some time the customer id might not be present so optional can be empty when there is no customer present,
+        // and we  can handle the app without crashing of NullPointerException
+        //Optional can either have one value or not value
+        Optional<Customer> customer = customerRepo.findById(customerId);
+        if (customer.isEmpty()){
+            throw new CustomerNotFoundException("Invalid Customer Id");
+        }
+        Customer customer1 = customer.get();
+        return CustomerTransformer.CustomerToCustomerResponse(customer1);
+    }
+
+    public List<CustomerResponse> getCustomerByGender(Gender gender) {
+        List<Customer> customers = customerRepo.findByGender(gender);
+        return customers.stream().map(CustomerTransformer::CustomerToCustomerResponse).toList();
+    }
+
+    public String addCustomer(CustomerRequest customerRequest){
+        List<Customer> existingCustomer = customerRepo.findByEmail(customerRequest.getEmail());
+        if(!existingCustomer.isEmpty()){ // if the email already exist then this means that user is already customer because email is unique for everyone
             return "Customer already exists";
         }
         try{
-            customerRepo.save(customer);
+            Customer newCustomer = CustomerTransformer.CustomerReqToCustomer(customerRequest);
+            customerRepo.save(newCustomer);
         }catch(Exception e){
             return "Error: "+ e;
         }
         return "Added Successfully";
     }
 
-    public String updateCustomer(Customer customer){
-        try{
-            Customer cust = customerRepo.findById(customer.getCustomerId()).orElseThrow(() -> new ResourceAccessException("Customer not found with id: " + customer.getCustomerId()));
-            cust.setAge(customer.getAge());
-            cust.setEmail(customer.getEmail());
-            cust.setGender(customer.getGender());
-            cust.setName(customer.getName());
-            customerRepo.save(cust);
-        } catch (Exception e){
-            return "Error: "+ e;
+    public CustomerResponse updateCustomer(long customerId, CustomerRequest customer){
+        // customer request cannot send customer id as input so we take the customer from the path variable
+        // to update particular customer
+        Optional<Customer> existingCustomer = customerRepo.findById(customerId);
+        // even if the customer is not present we will create new customer
+        Customer currCustomer;
+        if(existingCustomer.isEmpty()){
+            System.out.println("Customer was not present so created new customer and added to the database as put can also add not only update");
+            currCustomer = new Customer();
+        }else{
+            // list is not empty which means customer with email is present
+            currCustomer = existingCustomer.get();
         }
-        return "Updated Successfully";
-
+        currCustomer.setAge(customer.getAge());
+        currCustomer.setEmail(customer.getEmail());
+        currCustomer.setGender(customer.getGender());
+        currCustomer.setName(customer.getName());
+        customerRepo.save(currCustomer);
+        return CustomerTransformer.CustomerToCustomerResponse(currCustomer);
 
     }
 
@@ -73,9 +107,8 @@ public class CustomerService {
         return "Deleted All Customer";
     }
 
-    public Optional<Customer> getCustomer(long customerId) {
-        // we return Optional because some time the customer id might not be present so optional can be empty when there is no customer present,
-        // and we  can handle the app without crashing of NullPointerException
-        return customerRepo.findById(customerId);
+    public List<CustomerResponse> getByAgeAndGender(int age, Gender gender) {
+        List<Customer> customers = customerRepo.findByAgeAndGender(age, gender);
+        return customers.stream().map(CustomerTransformer::CustomerToCustomerResponse).toList();
     }
 }

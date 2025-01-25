@@ -22,7 +22,11 @@ driver to cab one to one
 spring.datasource.url = jpa:mysql://localhost:8080/db_name
 spring.datasource.username = root
 spring.datasource.password = root@123
-spring.jpa.hibernate.ddl-auto = update or create or any ddl
+spring.jpa.hibernate.ddl-auto = update, create, none, or create-drop or any ddl
+update -> the data is saved even after the application is shutdown and run again
+create -> drop and creates the table when the application is shutdown and re run
+create-drop -> the moment we shutdown the application all the tables and data is dropped no need to re start the app
+none -> none is use din production when we use none we can only add data to the table, creation of table and everything is done manually through sql queries
 
 # why use interface instead of class for repository
 we create a interface for entity repository because interface can inherit a interface but a class can only implement a interfcae this means

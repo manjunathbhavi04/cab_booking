@@ -41,6 +41,16 @@ public class CustomerController {
         return new ResponseEntity<>(customService.getByAgeAndGender(age, gender), HttpStatus.OK);
     }
 
+    @GetMapping("/get/ageAndGender")
+    public ResponseEntity<List<CustomerResponse>> getWithAgeAndGender(@RequestParam("age") int age, @RequestParam("gender") Gender gender){
+        List<CustomerResponse> customers = customService.getWithAgeAndGender(age, gender);
+        return new ResponseEntity<>(customers, HttpStatus.OK);
+    }
+
+    @GetMapping("get/age/count")
+    public ResponseEntity<Integer> ageCount(@RequestParam("age") int age){
+        return new ResponseEntity<>(customService.ageCount(age), HttpStatus.OK);
+    }
 
     @PostMapping("/add")
     public ResponseEntity<String> addCustomer(@RequestBody CustomerRequest customerRequest){

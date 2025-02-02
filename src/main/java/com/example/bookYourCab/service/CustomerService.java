@@ -47,6 +47,18 @@ public class CustomerService {
         return customers.stream().map(CustomerTransformer::CustomerToCustomerResponse).toList();
     }
 
+    public List<CustomerResponse> getByAgeAndGender(int age, Gender gender) {
+        List<Customer> customers = customerRepo.findByAgeAndGender(age, gender);
+        return customers.stream().map(CustomerTransformer::CustomerToCustomerResponse).toList();
+        //or
+        // return customers.stream().map(customer -> CustomerTransformer.CustomerToCustomerResponse(customer)).toList();
+    }
+
+    public List<CustomerResponse> getWithAgeAndGender(int age, Gender gender) {
+        List<Customer> customers = customerRepo.findWithAgeAndGender(gender, age);
+        return customers.stream().map(CustomerTransformer::CustomerToCustomerResponse).toList();
+    }
+
     public String addCustomer(CustomerRequest customerRequest){
         List<Customer> existingCustomer = customerRepo.findByEmail(customerRequest.getEmail());
         if(!existingCustomer.isEmpty()){ // if the email already exist then this means that user is already customer because email is unique for everyone
@@ -107,8 +119,7 @@ public class CustomerService {
         return "Deleted All Customer";
     }
 
-    public List<CustomerResponse> getByAgeAndGender(int age, Gender gender) {
-        List<Customer> customers = customerRepo.findByAgeAndGender(age, gender);
-        return customers.stream().map(CustomerTransformer::CustomerToCustomerResponse).toList();
+    public Integer ageCount(int age) {
+        return customerRepo.countAge(age);
     }
 }

@@ -2,10 +2,7 @@ package com.example.bookYourCab.model;
 
 import com.example.bookYourCab.Enum.TripStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 public class Booking {
     //customer to booking relation is one to many one customer can have multiple different bookings
@@ -32,6 +30,9 @@ public class Booking {
 
     @Enumerated(value = EnumType.STRING)
     private TripStatus tripStatus;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
+    private Payment payment;
 
     @CreationTimestamp
     Date bookedAt;

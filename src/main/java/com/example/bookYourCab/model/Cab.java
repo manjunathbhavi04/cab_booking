@@ -1,23 +1,26 @@
 package com.example.bookYourCab.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
+@Builder
 public class Cab {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cabId;
     private String model;
-    private int carNum;
+
+    @Column(unique = true, nullable = false)
+    private long carNum;
+
+    private double pricePerKm;
+
     private boolean available;
 
 }

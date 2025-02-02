@@ -40,3 +40,17 @@ REASON -> the reason Spring Data JPA returns an Optional<Customer> when you use 
 The Optional type is a container that can either hold a non-null value (the customer) or be empty (if no customer with that ID exists). This allows you to handle the case where the customer
 might not be found without causing a NullPointerException. So, instead of returning just a Customer object, the method returns Optional<Customer>, and you can unwrap it to get the actual
 Customer or handle the case where it's empty (no customer found).
+
+#DTO'S -> DATA TRANSFER OBJECTS
+As the name same data transfer object means we are transferring objects some where
+the main reason to use dtos, backend developer should always follow one rule that is never send entity class objects as input or return them sa output
+because this expose our database schema which can cause a lot of problems in future
+DTO's are of two types request and response dtos
+here request dto are sent as input and response dtos are sent as output
+
+# writing our own query using @Query
+there are default queries which are provided by jp but complex queries cannot be formed using jpa inbuilt methods
+so we use @Query and write our hql which is hibernate query language the syntax looks something like this
+lets say we want a query which will give us the customer who gender is male and age is more than 25 both gender and age will be sent as params so in query we use these params
+    @Query("select c from customer c where c.gender = :gender and c.age = :age")
+    List<Customer> findWithAgeAndGender(@Param("age") int age, @Param("gender") Gender gender);

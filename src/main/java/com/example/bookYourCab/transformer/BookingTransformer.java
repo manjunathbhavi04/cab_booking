@@ -1,5 +1,6 @@
 package com.example.bookYourCab.transformer;
 
+import com.example.bookYourCab.Enum.TripStatus;
 import com.example.bookYourCab.dto.request.BookingRequest;
 import com.example.bookYourCab.dto.response.BookingResponse;
 import com.example.bookYourCab.model.Booking;
@@ -10,11 +11,13 @@ import lombok.Builder;
 
 @Builder
 public class BookingTransformer {
-    public static Booking bookingDtoToBooking(BookingRequest bookingRequest) {
+    public static Booking bookingDtoToBooking(BookingRequest bookingRequest, double ratePerKm) {
         return Booking.builder()
                 .pickUp(bookingRequest.getPickUp())
                 .destination(bookingRequest.getDestination())
                 .distance(bookingRequest.getDistance())
+                .tripStatus(TripStatus.pending)
+                .billAmount(bookingRequest.getDistance() * ratePerKm)
                 .build();
     }
 

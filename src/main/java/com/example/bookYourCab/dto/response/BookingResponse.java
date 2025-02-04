@@ -2,6 +2,8 @@ package com.example.bookYourCab.dto.response;
 
 import com.example.bookYourCab.Enum.TripStatus;
 import lombok.*;
+
+import java.time.Instant;
 import java.util.Date;
 
 @Getter
@@ -15,8 +17,8 @@ public class BookingResponse {
     private double distance;
     private double billAmount;
     private TripStatus tripStatus;
-    Date bookedAt;
-    Date lastUpdateAt;
+    Instant bookedAt;
+    Instant lastUpdateAt;
     private CustomerResponse customer;
     private CabResponse cab;
 }

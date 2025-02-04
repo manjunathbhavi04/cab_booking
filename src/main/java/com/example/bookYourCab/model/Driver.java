@@ -26,7 +26,7 @@ public class Driver {
     @JoinColumn(name = "cab_id")
     private Cab cab;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "driver_id")
     private List<Booking> bookings = new ArrayList<>();
 }

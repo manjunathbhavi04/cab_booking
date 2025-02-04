@@ -3,6 +3,7 @@ package com.example.bookYourCab.service;
 import com.example.bookYourCab.Enum.TripStatus;
 import com.example.bookYourCab.dto.request.BookingRequest;
 import com.example.bookYourCab.dto.response.BookingResponse;
+import com.example.bookYourCab.exception.CabNotAvailableException;
 import com.example.bookYourCab.exception.CustomerNotFoundException;
 import com.example.bookYourCab.model.*;
 import com.example.bookYourCab.repository.*;
@@ -38,20 +39,21 @@ public class BookingService {
             throw new CustomerNotFoundException("Invalid customerId");
         }
         Customer customer = c.get();
-        Booking booking = BookingTransformer.bookingDtoToBooking(bookingRequest);
-        booking.setBookedAt(new Date()); // Set current date
-        booking.setTripStatus(TripStatus.pending); // Set initial trip status
-        Cab cab = checkCab();
+        Cab cab = cabRepo.getAvailableCabRandomly();
         if(cab == null) {
-            throw new RuntimeException("No available cabs at the moment");
+            throw new CabNotAvailableException("No available cabs at the moment");
         }else{
             cab.setAvailable(false);
             cabRepo.save(cab);
         }
+        Booking booking = BookingTransformer.bookingDtoToBooking(bookingRequest, cab.getPricePerKm());
+//        booking.setBookedAt(new Date().toInstant()); // Set current date
+
         Optional<Driver> d = driverRepo.findByCab(cab);
         Driver driver = d.get();
-        booking.setBillAmount(calculateBill(booking.getDistance(), cab.getPricePerKm()));
-        booking.setLastUpdateAt(new Date());
+
+//        booking.setBillAmount(calculateBill(booking.getDistance(), cab.getPricePerKm())); // this is calculated in the transformer
+//        booking.setLastUpdateAt(new Date().toInstant());
         bookingRepo.save(booking);
 
         //adding the booking assigned to the customer

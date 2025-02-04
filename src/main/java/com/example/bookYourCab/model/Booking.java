@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -35,8 +36,10 @@ public class Booking {
     private Payment payment;
 
     @CreationTimestamp
-    Date bookedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Instant bookedAt;
 
     @UpdateTimestamp
-    Date lastUpdateAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Instant lastUpdateAt;
 }

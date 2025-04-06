@@ -12,4 +12,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = "SELECT driver_id FROM booking WHERE booking_id = :bookingId", nativeQuery = true)
     Long findDriverIdByBookingId(@Param("bookingId") Long bookingId);
 
+    @Query(value = "SELECT customer_id FROM booking WHERE booking_id = :bookingId", nativeQuery = true)
+    Long findCustomerIdByBookingId(@Param("bookingId") Long bookingId);
+
+
 }

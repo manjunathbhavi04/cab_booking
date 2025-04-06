@@ -4,15 +4,10 @@ import com.example.bookYourCab.Enum.PaymentStatus;
 import com.example.bookYourCab.Enum.TripStatus;
 import com.example.bookYourCab.dto.request.PaymentRequest;
 import com.example.bookYourCab.dto.response.PaymentResponse;
+import com.example.bookYourCab.exception.CustomerNotFoundException;
 import com.example.bookYourCab.exception.ResourceNotFoundException;
-import com.example.bookYourCab.model.Booking;
-import com.example.bookYourCab.model.Cab;
-import com.example.bookYourCab.model.Driver;
-import com.example.bookYourCab.model.Payment;
-import com.example.bookYourCab.repository.BookingRepository;
-import com.example.bookYourCab.repository.CabRepository;
-import com.example.bookYourCab.repository.DriverRepository;
-import com.example.bookYourCab.repository.PaymentRepository;
+import com.example.bookYourCab.model.*;
+import com.example.bookYourCab.repository.*;
 import com.example.bookYourCab.transformer.PaymentTransformer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +24,9 @@ public class PaymentService {
     private PaymentRepository paymentRepository;
 
     @Autowired
+    private CustomerRepository customerRepo;
+
+    @Autowired
     private BookingRepository bookingRepository;
 
     @Autowired
@@ -36,6 +34,9 @@ public class PaymentService {
 
     @Autowired
     private CabRepository cabRepo;
+
+    @Autowired
+    private EmailService emailService;
 
     public PaymentResponse paymentBooking(PaymentRequest paymentRequest, long bookingId) {
         Optional<Booking> b = bookingRepository.findById(bookingId);
@@ -59,6 +60,17 @@ public class PaymentService {
             updateCabAvailability(bookingId);
 
             bookingRepository.save(booking);
+
+            long customerId = bookingRepository.findCustomerIdByBookingId(bookingId);
+            Customer customer = customerRepo.findById(customerId).orElseThrow(() -> new CustomerNotFoundException("Invalid customer ID"));
+
+            //sending mail when the booking is done
+            String message = "Dear " + customer.getName() + ",\n\nYour payment of Rs. " + payment.getAmountPaid() +
+                    " has been successfully processed for Booking ID: " + bookingId + ".\n" +
+                    "Payment Date: " + payment.getPaymentDate() + "\n" +
+                    "Thank you for choosing BookYourCab!";
+            emailService.sendEmail(customer.getEmail(), "Payment Confirmation", message);
+            System.out.println("paid");
         }else{
             payment.setStatus(PaymentStatus.PENDING);
         }

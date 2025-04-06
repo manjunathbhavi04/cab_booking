@@ -11,13 +11,13 @@ import lombok.Builder;
 
 @Builder
 public class BookingTransformer {
-    public static Booking bookingDtoToBooking(BookingRequest bookingRequest, double ratePerKm) {
+    public static Booking bookingDtoToBooking(BookingRequest bookingRequest, double pricePerKm) {
         return Booking.builder()
                 .pickUp(bookingRequest.getPickUp())
                 .destination(bookingRequest.getDestination())
                 .distance(bookingRequest.getDistance())
                 .tripStatus(TripStatus.pending)
-                .billAmount(bookingRequest.getDistance() * ratePerKm)
+                .billAmount(bookingRequest.getDistance() * pricePerKm)
                 .build();
     }
 
